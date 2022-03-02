@@ -184,4 +184,48 @@ class SalesAnalyst
     end
     invoice_items_by_date.flatten.map { |invoice| (invoice.unit_price * invoice.quantity) }.sum
   end
+  
+  def invoice_revenue
+    revenue_per_invoice = {}
+    @invoice_items.all.each do |invoice_item|
+      @invoices.find_by_id(invoice_item.id)
+      revenue_per_invoice[@invoices.find_by_id(invoice_item.id)] = 0 if !revenue_per_invoice.has_key?(invoice_item.invoice_id)
+      revenue_per_invoice[@invoices.find_by_id(invoice_item.id)] += (invoice_item.unit_price * invoice_item.quantity)
+    end
+    revenue_per_invoice
+  end
+
+  def merchant_revenue_hash
+    revenue_per_merchant_hash = Hash.new(0)
+    invoice_revenue.each do |invoice, revenue|
+      break if invoice.nil?
+      merchant = @merchants.find_by_id(invoice.merchant_id)
+      revenue_per_merchant_hash[merchant] += revenue if invoice.status == :success
+    end
+    revenue_per_merchant_hash
+  end
+
+  def revenue_by_merchant(merchant_id)
+    merchant = @merchants.find_by_id(merchant_id)
+    BigDecimal(merchant_revenue_hash[merchant])
+  end
 end
+
+
+  # def top_revenue_earners(num)
+  #   top_merchants = merchant_revenue_hash.sort
+  #   top_merchants.flatten!
+  #   top_merchants
+  #
+  #   # require "pry"; binding.pry
+
+    # top_merchants_by_revenue = []
+    # merchant_revenue_hash.each do |merchant, revenue|
+    #   revenue.sort
+
+      # def new_method
+      #   revenue = {}
+      #   @invoice_items.all.each do |invoice_item|
+      #     invoice = find_by_id(invoice_item.invoice_id)
+      #
+      # end
