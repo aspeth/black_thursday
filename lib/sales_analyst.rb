@@ -209,6 +209,24 @@ class SalesAnalyst
     merchant = @merchants.find_by_id(merchant_id)
     BigDecimal(merchant_revenue_hash[merchant])
   end
+
+  def merchants_and_items
+    merchants_and_items = Hash.new(0)
+    @merchants.all.each do |merchant|
+      @items.all.each do |item|
+        merchants_and_items[merchant] += 1 if item.merchant_id == merchant.id
+      end
+    end
+    merchants_and_items
+  end
+
+  def merchants_with_only_one_item
+    one_item_merchants = []
+    merchants_and_items.each do |merchant, item_count|
+      one_item_merchants << merchant if item_count == 1
+    end
+    one_item_merchants
+  end
 end
 
 
