@@ -2,7 +2,9 @@
 
 # item_repository
 require 'pry'
+require_relative 'repo_module'
 class ItemRepository
+  include RepoModule
   attr_reader :items
 
   def initialize(file)
@@ -16,9 +18,9 @@ class ItemRepository
     end
   end
 
-  def all
-    @items
-  end
+  # def all
+  #   @items
+  # end
 
   def find_by_id(id)
     @items.find { |item| item.id == id }
