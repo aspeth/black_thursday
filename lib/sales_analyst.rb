@@ -135,13 +135,9 @@ class SalesAnalyst
   end
 
   def invoices_by_day_of_week
-    invoices_by_day_of_week = {}
+    invoices_by_day_of_week = Hash.new(0)
     @invoices.all.each do |invoice|
-      unless invoices_by_day_of_week.key?(invoice.created_at.strftime('%A'))
-        invoices_by_day_of_week[invoice.created_at.strftime('%A')] =
-          0
-      end
-      !invoices_by_day_of_week[invoice.created_at.strftime('%A')] += 1
+      invoices_by_day_of_week[invoice.created_at.strftime('%A')] += 1
     end
     invoices_by_day_of_week
   end
