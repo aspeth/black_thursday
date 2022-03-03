@@ -5,7 +5,7 @@ require 'pry'
 require_relative 'repo_module'
 class ItemRepository
   include RepoModule
-  attr_reader :items
+  attr_reader :repo
 
   def initialize(file)
     @repo = []
@@ -23,34 +23,34 @@ class ItemRepository
   # end
 
   def find_by_id(id)
-    @items.find { |item| item.id == id }
+    @repo.find { |item| item.id == id }
   end
 
   def find_by_name(name)
-    @items.find { |item| item.name.downcase == name.downcase }
+    @repo.find { |item| item.name.downcase == name.downcase }
   end
 
   def find_all_with_description(description)
-    @items.find_all { |item| item.description.downcase == description.downcase }
+    @repo.find_all { |item| item.description.downcase == description.downcase }
   end
 
   def find_all_by_price(price)
-    @items.find_all { |item| item.unit_price == price }
+    @repo.find_all { |item| item.unit_price == price }
   end
 
   def find_all_by_price_in_range(range)
-    @items.find_all { |item| item.unit_price >= range.first && item.unit_price <= range.last }
+    @repo.find_all { |item| item.unit_price >= range.first && item.unit_price <= range.last }
   end
 
   def find_all_by_merchant_id(merchant_id)
-    @items.find_all { |item| item.merchant_id == merchant_id }
+    @repo.find_all { |item| item.merchant_id == merchant_id }
   end
 
   def create(attributes)
-    @items.sort_by(&:id)
-    last_id = @items.last.id
+    @repo.sort_by(&:id)
+    last_id = @repo.last.id
     attributes[:id] = (last_id += 1)
-    @items << Item.new(attributes)
+    @repo << Item.new(attributes)
   end
 
   def update(id, attributes)
@@ -64,7 +64,7 @@ class ItemRepository
   end
 
   def delete(id)
-    @items.delete(find_by_id(id))
+    @repo.delete(find_by_id(id))
   end
 
   def inspect
