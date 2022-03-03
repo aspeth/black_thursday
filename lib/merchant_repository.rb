@@ -34,8 +34,4 @@ class MerchantRepository
       merchant.name = v if key == :name
     end
   end
-
-  def delete(id)
-    @repo.delete(find_by_id(id))
-  end
 end

@@ -19,6 +19,10 @@ module RepoModule
     @repo.find_all { |element| element.invoice_id == invoice_id }
   end
 
+  def delete(id)
+    @repo.delete(find_by_id(id))
+  end
+
   def inspect
     "#<#{@self.class} #{@merchants.size} rows>"
   end

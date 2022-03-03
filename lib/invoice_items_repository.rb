@@ -35,8 +35,4 @@ class InvoiceItemsRepository
       invoice_item.updated_at = Time.now
     end
   end
-
-  def delete(id)
-    @repo.delete(find_by_id(id))
-  end
 end

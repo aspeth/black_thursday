@@ -45,12 +45,4 @@ class ItemRepository
       item.updated_at = Time.now
     end
   end
-
-  def delete(id)
-    @repo.delete(find_by_id(id))
-  end
-
-  def inspect
-    "#<#{@items.class} #{@items.all.size} rows>"
-  end
 end
