@@ -4,11 +4,12 @@
 require_relative 'repo_module'
 class TransactionRepository
   include RepoModule
-  attr_reader :repo
+  attr_reader :repo, :new_object
 
   def initialize(file)
     @repo = []
     open_transactions(file)
+    @new_object = Transaction
   end
 
   def open_transactions(file)
@@ -25,13 +26,6 @@ class TransactionRepository
     @repo.find_all { |transaction| transaction.result == result }
   end
 
-  def create(attributes)
-    @repo.sort_by(&:id)
-    last_id = @repo.last.id
-    attributes[:id] = (last_id += 1)
-    @repo << Transaction.new(attributes)
-  end
-
   def update(id, attributes)
     transactions = find_by_id(id)
     attributes.map do |key, value|
@@ -40,9 +34,5 @@ class TransactionRepository
         transactions.updated_at = Time.now
       end
     end
-  end
-
-  def delete(id)
-    @repo.delete(find_by_id(id)) unless nil
   end
 end

@@ -4,11 +4,12 @@
 require_relative 'repo_module'
 class MerchantRepository
   include RepoModule
-  attr_reader :repo
+  attr_reader :repo, :new_object
 
   def initialize(file)
     @repo = []
     open_merchants(file)
+    @new_object = Merchant
   end
 
   def open_merchants(file)
@@ -19,13 +20,6 @@ class MerchantRepository
 
   def find_all_by_name(fragment)
     @repo.find_all { |merchant| merchant.name.downcase.include?(fragment) }
-  end
-
-  def create(attributes)
-    @repo.sort_by(&:id)
-    last_id = @repo.last.id
-    attributes[:id] = (last_id += 1)
-    @repo << Merchant.new(attributes)
   end
 
   def update(id, attributes)

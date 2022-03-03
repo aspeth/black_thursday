@@ -2,11 +2,12 @@
 require_relative 'repo_module'
 class InvoiceRepository
   include RepoModule
-  attr_reader :repo
+  attr_reader :repo, :new_object
 
   def initialize(file)
     @repo = []
     open_items(file)
+    @new_object = Invoice
   end
 
   def open_items(file)
@@ -21,13 +22,6 @@ class InvoiceRepository
 
   def find_all_by_status(status)
     @repo.find_all { |invoice| invoice.status == status }
-  end
-
-  def create(attributes)
-    @repo.sort_by(&:id)
-    last_id = @repo.last.id
-    attributes[:id] = (last_id += 1)
-    @repo << Invoice.new(attributes)
   end
 
   def update(id, attributes)

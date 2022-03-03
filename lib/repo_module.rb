@@ -19,6 +19,15 @@ module RepoModule
     @repo.find_all { |element| element.invoice_id == invoice_id }
   end
 
+  def create(attributes)
+    @repo.sort_by(&:id)
+    last_id = @repo.last.id
+    attributes[:id] = (last_id += 1)
+    object = @new_object.new(attributes)
+    @repo << object
+    object
+  end
+
   def delete(id)
     @repo.delete(find_by_id(id))
   end

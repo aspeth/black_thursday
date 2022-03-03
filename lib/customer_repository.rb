@@ -4,11 +4,12 @@
 require_relative 'repo_module'
 class CustomerRepository
   include RepoModule
-  attr_reader :repo
+  attr_reader :repo, :new_object
 
   def initialize(file)
     @repo = []
     open_customers(file)
+    @new_object = Customer
   end
 
   def open_customers(file)
@@ -25,13 +26,6 @@ class CustomerRepository
     @repo.find_all { |customer| customer.last_name.downcase.include?(name.downcase) }
   end
 
-  def create(attributes)
-    @repo.sort_by(&:id)
-    last_id = @repo.last.id
-    attributes[:id] = (last_id += 1)
-    @repo << Customer.new(attributes)
-  end
-
   def update(id, attributes)
     customer = find_by_id(id)
     attributes.map do |key, v|
@@ -39,9 +33,5 @@ class CustomerRepository
       customer.last_name = v if key == :last_name
       customer.updated_at = Time.now
     end
-  end
-
-  def delete(id)
-    @repo.delete(find_by_id(id))
   end
 end

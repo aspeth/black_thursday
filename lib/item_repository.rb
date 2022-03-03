@@ -4,11 +4,12 @@
 require_relative 'repo_module'
 class ItemRepository
   include RepoModule
-  attr_reader :repo
+  attr_reader :repo, :new_object
 
   def initialize(file)
     @repo = []
     open_items(file)
+    @new_object = Item
   end
 
   def open_items(file)
@@ -27,13 +28,6 @@ class ItemRepository
 
   def find_all_by_price_in_range(range)
     @repo.find_all { |item| item.unit_price >= range.first && item.unit_price <= range.last }
-  end
-
-  def create(attributes)
-    @repo.sort_by(&:id)
-    last_id = @repo.last.id
-    attributes[:id] = (last_id += 1)
-    @repo << Item.new(attributes)
   end
 
   def update(id, attributes)
