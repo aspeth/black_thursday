@@ -51,8 +51,4 @@ class CustomerRepository
   def delete(id)
     @repo.delete(find_by_id(id))
   end
-
-  def inspect
-    "#<#{@customers.class} #{@customers.all.size} rows>"
-  end
 end
