@@ -202,8 +202,7 @@ class SalesAnalyst
     @invoice_items.all.each do |invoice_item|
       @invoices.find_by_id(invoice_item.id)
       unless revenue_per_invoice.key?(invoice_item.invoice_id)
-        revenue_per_invoice[@invoices.find_by_id(invoice_item.id)] =
-          0
+        revenue_per_invoice[@invoices.find_by_id(invoice_item.id)] = 0
       end
       revenue_per_invoice[@invoices.find_by_id(invoice_item.id)] += (invoice_item.unit_price * invoice_item.quantity)
     end
