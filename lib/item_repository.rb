@@ -8,13 +8,13 @@ class ItemRepository
   attr_reader :items
 
   def initialize(file)
-    @items = []
+    @repo = []
     open_items(file)
   end
 
   def open_items(file)
     CSV.foreach(file, headers: true, header_converters: :symbol) do |row|
-      @items << Item.new(row)
+      @repo << Item.new(row)
     end
   end
 
