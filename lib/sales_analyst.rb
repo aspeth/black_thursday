@@ -184,7 +184,7 @@ class SalesAnalyst
     end
     invoice_items_by_date.flatten.map { |invoice| (invoice.unit_price * invoice.quantity) }.sum
   end
-  
+
   def invoice_revenue
     revenue_per_invoice = {}
     @invoice_items.all.each do |invoice_item|

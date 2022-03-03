@@ -153,5 +153,12 @@ RSpec.describe SalesAnalyst do
       expect(expected).to eq BigDecimal(expected)
       expect(expected.class).to eq BigDecimal
     end
+
+    it "#merchants_with_only_one_item returns merchants with only one item" do
+      expected = @sa.merchants_with_only_one_item
+
+      expect(expected.length).to eq 243
+      expect(expected.first.class).to eq Merchant
+    end
   end
 end
