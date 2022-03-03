@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Invoice Items Repo
 
 require_relative 'repo_module'

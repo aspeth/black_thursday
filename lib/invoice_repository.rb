@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Invoice Repo
 require_relative 'repo_module'
 class InvoiceRepository

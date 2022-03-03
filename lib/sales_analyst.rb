@@ -101,7 +101,9 @@ class SalesAnalyst
   def high_invoice_merchants
     highest_invoice_merchants = []
     total_invoices_per_merchant.select do |k, v|
-      highest_invoice_merchants << k if v > (average_invoices_per_merchant + (average_invoices_per_merchant_standard_deviation * 2))
+      if v > (average_invoices_per_merchant + (average_invoices_per_merchant_standard_deviation * 2))
+        highest_invoice_merchants << k
+      end
     end
     highest_invoice_merchants
   end
@@ -119,7 +121,9 @@ class SalesAnalyst
   def low_invoice_merchants
     low_invoice_merchants = []
     total_invoices_per_merchant.select do |k, v|
-      low_invoice_merchants << k if v < (average_invoices_per_merchant - (average_invoices_per_merchant_standard_deviation * 2))
+      if v < (average_invoices_per_merchant - (average_invoices_per_merchant_standard_deviation * 2))
+        low_invoice_merchants << k
+      end
     end
     low_invoice_merchants
   end
@@ -197,7 +201,10 @@ class SalesAnalyst
     revenue_per_invoice = {}
     @invoice_items.all.each do |invoice_item|
       @invoices.find_by_id(invoice_item.id)
-      revenue_per_invoice[@invoices.find_by_id(invoice_item.id)] = 0 if !revenue_per_invoice.has_key?(invoice_item.invoice_id)
+      unless revenue_per_invoice.key?(invoice_item.invoice_id)
+        revenue_per_invoice[@invoices.find_by_id(invoice_item.id)] =
+          0
+      end
       revenue_per_invoice[@invoices.find_by_id(invoice_item.id)] += (invoice_item.unit_price * invoice_item.quantity)
     end
     revenue_per_invoice
@@ -207,6 +214,7 @@ class SalesAnalyst
     revenue_per_merchant_hash = Hash.new(0)
     invoice_revenue.each do |invoice, revenue|
       break if invoice.nil?
+
       merchant = @merchants.find_by_id(invoice.merchant_id)
       revenue_per_merchant_hash[merchant] += revenue if invoice.status == :success
     end
@@ -237,21 +245,20 @@ class SalesAnalyst
   end
 end
 
+# def top_revenue_earners(num)
+#   top_merchants = merchant_revenue_hash.sort
+#   top_merchants.flatten!
+#   top_merchants
+#
+#   # require "pry"; binding.pry
 
-  # def top_revenue_earners(num)
-  #   top_merchants = merchant_revenue_hash.sort
-  #   top_merchants.flatten!
-  #   top_merchants
-  #
-  #   # require "pry"; binding.pry
+# top_merchants_by_revenue = []
+# merchant_revenue_hash.each do |merchant, revenue|
+#   revenue.sort
 
-    # top_merchants_by_revenue = []
-    # merchant_revenue_hash.each do |merchant, revenue|
-    #   revenue.sort
-
-      # def new_method
-      #   revenue = {}
-      #   @invoice_items.all.each do |invoice_item|
-      #     invoice = find_by_id(invoice_item.invoice_id)
-      #
-      # end
+# def new_method
+#   revenue = {}
+#   @invoice_items.all.each do |invoice_item|
+#     invoice = find_by_id(invoice_item.invoice_id)
+#
+# end
