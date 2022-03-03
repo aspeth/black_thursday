@@ -17,10 +17,6 @@ class ItemRepository
     end
   end
 
-  def find_by_name(name)
-    @repo.find { |item| item.name.downcase == name.downcase }
-  end
-
   def find_all_with_description(description)
     @repo.find_all { |item| item.description.downcase == description.downcase }
   end

@@ -7,6 +7,10 @@ module RepoModule
     @repo.find { |element| element.id == id }
   end
 
+  def find_by_name(name)
+    @repo.find { |element| element.name.downcase == name.downcase }
+  end
+
   def inspect
     "#<#{@self.class} #{@merchants.size} rows>"
   end
