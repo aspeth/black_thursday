@@ -98,38 +98,46 @@ class SalesAnalyst
     Math.sqrt(total_square_diff / (@merchants.all.count - 1)).round(2)
   end
 
+  def high_invoice_merchants
+    highest_invoice_merchants = []
+    total_invoices_per_merchant.select do |k, v|
+      highest_invoice_merchants << k if v > (average_invoices_per_merchant + (average_invoices_per_merchant_standard_deviation * 2))
+    end
+    highest_invoice_merchants
+  end
+
   def top_merchants_by_invoice_count
-    @high_invoice_merchants = []
-    total_invoices_per_merchant.select do |_k, v|
-      v > (average_invoices_per_merchant + (average_invoices_per_merchant_standard_deviation * 2))
-    end.each_key do |high_id|
+    top_merchants = []
+    high_invoice_merchants.each do |high_id|
       @merchants.all.each do |merchant|
-        @high_invoice_merchants << merchant if merchant.id == high_id
+        top_merchants << merchant if merchant.id == high_id
       end
     end
-    @high_invoice_merchants
+    top_merchants
+  end
+
+  def low_invoice_merchants
+    low_invoice_merchants = []
+    total_invoices_per_merchant.select do |k, v|
+      low_invoice_merchants << k if v < (average_invoices_per_merchant - (average_invoices_per_merchant_standard_deviation * 2))
+    end
+    low_invoice_merchants
   end
 
   def bottom_merchants_by_invoice_count
-    @low_invoice_merchants = []
-    total_invoices_per_merchant.select do |_k, v|
-      v < (average_invoices_per_merchant - (average_invoices_per_merchant_standard_deviation * 2))
-    end.each_key do |high_id|
+    bottom_merchants = []
+    low_invoice_merchants.each do |low_id|
       @merchants.all.each do |merchant|
-        @low_invoice_merchants << merchant if merchant.id == high_id
+        bottom_merchants << merchant if merchant.id == low_id
       end
     end
-    @low_invoice_merchants
+    bottom_merchants
   end
 
   def invoices_by_day_of_week
-    invoices_by_day_of_week = {}
+    invoices_by_day_of_week = Hash.new(0)
     @invoices.all.each do |invoice|
-      unless invoices_by_day_of_week.key?(invoice.created_at.strftime('%A'))
-        invoices_by_day_of_week[invoice.created_at.strftime('%A')] =
-          0
-      end
-      !invoices_by_day_of_week[invoice.created_at.strftime('%A')] += 1
+      invoices_by_day_of_week[invoice.created_at.strftime('%A')] += 1
     end
     invoices_by_day_of_week
   end
@@ -169,17 +177,81 @@ class SalesAnalyst
     invoices.map { |invoice| (invoice.unit_price * invoice.quantity) }.sum
   end
 
-  def total_revenue_by_date(date)
+  def invoices_by_date(date)
     invoice_id_by_date = []
     @invoices.all.each do |invoice|
-      # require 'pry'
-      # binding.pry
       invoice_id_by_date << invoice.id if invoice.created_at.strftime('%D') == date.strftime('%D')
     end
+    invoice_id_by_date
+  end
+
+  def total_revenue_by_date(date)
     invoice_items_by_date = []
-    invoice_id_by_date.each do |invoice_id|
+    invoices_by_date(date).each do |invoice_id|
       invoice_items_by_date << @invoice_items.find_all_by_invoice_id(invoice_id)
     end
     invoice_items_by_date.flatten.map { |invoice| (invoice.unit_price * invoice.quantity) }.sum
   end
+
+  def invoice_revenue
+    revenue_per_invoice = {}
+    @invoice_items.all.each do |invoice_item|
+      @invoices.find_by_id(invoice_item.id)
+      revenue_per_invoice[@invoices.find_by_id(invoice_item.id)] = 0 if !revenue_per_invoice.has_key?(invoice_item.invoice_id)
+      revenue_per_invoice[@invoices.find_by_id(invoice_item.id)] += (invoice_item.unit_price * invoice_item.quantity)
+    end
+    revenue_per_invoice
+  end
+
+  def merchant_revenue_hash
+    revenue_per_merchant_hash = Hash.new(0)
+    invoice_revenue.each do |invoice, revenue|
+      break if invoice.nil?
+      merchant = @merchants.find_by_id(invoice.merchant_id)
+      revenue_per_merchant_hash[merchant] += revenue if invoice.status == :success
+    end
+    revenue_per_merchant_hash
+  end
+
+  def revenue_by_merchant(merchant_id)
+    merchant = @merchants.find_by_id(merchant_id)
+    BigDecimal(merchant_revenue_hash[merchant])
+  end
+
+  def merchants_and_items
+    merchants_and_items = Hash.new(0)
+    @merchants.all.each do |merchant|
+      @items.all.each do |item|
+        merchants_and_items[merchant] += 1 if item.merchant_id == merchant.id
+      end
+    end
+    merchants_and_items
+  end
+
+  def merchants_with_only_one_item
+    one_item_merchants = []
+    merchants_and_items.each do |merchant, item_count|
+      one_item_merchants << merchant if item_count == 1
+    end
+    one_item_merchants
+  end
 end
+
+
+  # def top_revenue_earners(num)
+  #   top_merchants = merchant_revenue_hash.sort
+  #   top_merchants.flatten!
+  #   top_merchants
+  #
+  #   # require "pry"; binding.pry
+
+    # top_merchants_by_revenue = []
+    # merchant_revenue_hash.each do |merchant, revenue|
+    #   revenue.sort
+
+      # def new_method
+      #   revenue = {}
+      #   @invoice_items.all.each do |invoice_item|
+      #     invoice = find_by_id(invoice_item.invoice_id)
+      #
+      # end
