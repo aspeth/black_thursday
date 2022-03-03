@@ -20,10 +20,6 @@ class InvoiceItemsRepository
     @repo.find_all { |item| item.item_id == item_id }
   end
 
-  def find_all_by_invoice_id(invoice_id)
-    @repo.find_all { |invoice_item| invoice_item.invoice_id == invoice_id }
-  end
-
   def create(attributes)
     @repo.sort_by { |invoice_item| invoice_item.id }
     last_id = @repo.last.id

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# merchant_repository
+# Merchant Repo
 require_relative 'repo_module'
 class MerchantRepository
   include RepoModule

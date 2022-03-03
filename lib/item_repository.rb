@@ -29,10 +29,6 @@ class ItemRepository
     @repo.find_all { |item| item.unit_price >= range.first && item.unit_price <= range.last }
   end
 
-  def find_all_by_merchant_id(merchant_id)
-    @repo.find_all { |item| item.merchant_id == merchant_id }
-  end
-
   def create(attributes)
     @repo.sort_by(&:id)
     last_id = @repo.last.id
