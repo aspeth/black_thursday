@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# item_repository
+# Item Repo
 require_relative 'repo_module'
 class ItemRepository
   include RepoModule
@@ -16,10 +16,6 @@ class ItemRepository
       @repo << Item.new(row)
     end
   end
-
-  # def find_by_id(id)
-  #   @repo.find { |item| item.id == id }
-  # end
 
   def find_by_name(name)
     @repo.find { |item| item.name.downcase == name.downcase }

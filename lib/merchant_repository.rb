@@ -17,10 +17,6 @@ class MerchantRepository
     end
   end
 
-  def find_by_id(id)
-    @repo.find { |merchant| merchant.id == id }
-  end
-
   def find_by_name(name)
     @repo.find { |merchant| merchant.name.downcase == name.downcase }
   end

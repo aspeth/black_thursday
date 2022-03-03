@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Customer Repo
 require_relative 'repo_module'
 class CustomerRepository
   include RepoModule
@@ -14,14 +15,6 @@ class CustomerRepository
     CSV.foreach(file, headers: true, header_converters: :symbol) do |row|
       @repo << Customer.new(row)
     end
-  end
-
-  # def all
-  #  @repo
-  # end
-
-  def find_by_id(id)
-    @repo.find { |customer| customer.id == id }
   end
 
   def find_all_by_first_name(name)
