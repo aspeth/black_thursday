@@ -16,7 +16,7 @@ RSpec.describe ItemRepository do
   end
 
   it 'can return an array of #all items' do
-    expect(@se.items.all.count).to eq(1367)
+    expect(@se.items.repo.count).to eq(1367)
   end
 
   it 'can return an item id' do

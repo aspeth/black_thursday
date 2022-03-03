@@ -1,41 +1,25 @@
 # frozen_string_literal: true
 
-# merchant_repository
+# Merchant Repo
+require_relative 'repo_module'
 class MerchantRepository
-  attr_reader :merchants
+  include RepoModule
+  attr_reader :repo, :new_object
 
   def initialize(file)
-    @merchants = []
+    @repo = []
     open_merchants(file)
+    @new_object = Merchant
   end
 
   def open_merchants(file)
     CSV.foreach(file, headers: true, header_converters: :symbol) do |row|
-      @merchants << Merchant.new(row)
+      @repo << Merchant.new(row)
     end
   end
 
-  def all
-    @merchants
-  end
-
-  def find_by_id(id)
-    @merchants.find { |merchant| merchant.id == id }
-  end
-
-  def find_by_name(name)
-    @merchants.find { |merchant| merchant.name.downcase == name.downcase }
-  end
-
   def find_all_by_name(fragment)
-    @merchants.find_all { |merchant| merchant.name.downcase.include?(fragment) }
-  end
-
-  def create(attributes)
-    @merchants.sort_by(&:id)
-    last_id = @merchants.last.id
-    attributes[:id] = (last_id += 1)
-    @merchants << Merchant.new(attributes)
+    @repo.find_all { |merchant| merchant.name.downcase.include?(fragment) }
   end
 
   def update(id, attributes)
@@ -43,13 +27,5 @@ class MerchantRepository
     attributes.map do |key, v|
       merchant.name = v if key == :name
     end
-  end
-
-  def delete(id)
-    @merchants.delete(find_by_id(id))
-  end
-
-  def inspect
-    "#<#{@merchants.class} #{@merchants.size} rows>"
   end
 end

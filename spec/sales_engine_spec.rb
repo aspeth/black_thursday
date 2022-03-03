@@ -15,7 +15,7 @@ RSpec.describe SalesEngine do
     expect(se).to be_a(SalesEngine)
     expect(se.items).to be_a(ItemRepository)
     expect(se.merchants).to be_a(MerchantRepository)
-    expect(se.items.all.count).to eq(1367)
+    expect(se.items.repo.count).to eq(1367)
     expect(se.merchants.all.count).to eq(475)
     expect(se.invoices.all.count).to eq(4985)
     expect(se.invoice_items.all.count).to eq(21_830)

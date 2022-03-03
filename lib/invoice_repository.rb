@@ -1,45 +1,29 @@
-# invoice_repository
+# frozen_string_literal: true
 
-require 'pry'
+# Invoice Repo
+require_relative 'repo_module'
 class InvoiceRepository
-  attr_reader :invoices
+  include RepoModule
+  attr_reader :repo, :new_object
 
   def initialize(file)
-    @invoices = []
+    @repo = []
     open_items(file)
+    @new_object = Invoice
   end
 
   def open_items(file)
     CSV.foreach(file, headers: true, header_converters: :symbol) do |row|
-      @invoices << Invoice.new(row)
+      @repo << Invoice.new(row)
     end
   end
 
-  def all
-    @invoices
-  end
-
-  def find_by_id(invoice_id)
-    @invoices.find { |invoice| invoice.id == invoice_id }
-  end
-
   def find_all_by_customer_id(customer_id)
-    @invoices.find_all { |invoice| invoice.customer_id == customer_id }
-  end
-
-  def find_all_by_merchant_id(merchant_id)
-    @invoices.find_all { |invoice| invoice.merchant_id == merchant_id }
+    @repo.find_all { |invoice| invoice.customer_id == customer_id }
   end
 
   def find_all_by_status(status)
-    @invoices.find_all { |invoice| invoice.status == status }
-  end
-
-  def create(attributes)
-    @invoices.sort_by(&:id)
-    last_id = @invoices.last.id
-    attributes[:id] = (last_id += 1)
-    @invoices << Invoice.new(attributes)
+    @repo.find_all { |invoice| invoice.status == status }
   end
 
   def update(id, attributes)
@@ -48,13 +32,5 @@ class InvoiceRepository
       invoice.status = value if key == :status
       invoice.updated_at = Time.now
     end
-  end
-
-  def delete(id)
-    @invoices.delete(find_by_id(id))
-  end
-
-  def inspect
-    "#<#{@invoice_items.class} #{@invoice_items.all.size} rows>"
   end
 end
