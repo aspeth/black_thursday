@@ -98,16 +98,22 @@ class SalesAnalyst
     Math.sqrt(total_square_diff / (@merchants.all.count - 1)).round(2)
   end
 
+  def high_invoice_merchants
+    highest_invoice_merchants = []
+    total_invoices_per_merchant.select do |k, v|
+      highest_invoice_merchants << k if v > (average_invoices_per_merchant + (average_invoices_per_merchant_standard_deviation * 2))
+    end
+    highest_invoice_merchants
+  end
+
   def top_merchants_by_invoice_count
-    @high_invoice_merchants = []
-    total_invoices_per_merchant.select do |_k, v|
-      v > (average_invoices_per_merchant + (average_invoices_per_merchant_standard_deviation * 2))
-    end.each_key do |high_id|
+    top_merchants = []
+    high_invoice_merchants.each do |high_id|
       @merchants.all.each do |merchant|
-        @high_invoice_merchants << merchant if merchant.id == high_id
+        top_merchants << merchant if merchant.id == high_id
       end
     end
-    @high_invoice_merchants
+    top_merchants
   end
 
   def bottom_merchants_by_invoice_count
